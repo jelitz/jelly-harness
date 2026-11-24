@@ -1,0 +1,33 @@
+name: Upstream release check
+
+# Opens an issue in this fork when obra/superpowers publishes a release that
+# is not merged here yet. The issue is assigned to the repository owner, so
+# GitHub's own notifications deliver it.
+
+on:
+  schedule:
+    - cron: "17 0 * * *" # 매일 09:17 KST
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "병합할 릴리스가 없어도 시험 이슈를 연다"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Compare with upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force || 'false' }}
+        run: bash .github/scripts/upstream-release-check.sh
