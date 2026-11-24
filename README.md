@@ -1,400 +1,75 @@
-# Superpowers
+# jelly-harness
 
-Superpowers is a complete software development methodology for your coding agents, built on top of a set of composable skills and some initial instructions that make sure your agent uses them.
+[obra/superpowers](https://github.com/obra/superpowers) v7.0.2를 바탕으로 한 개인 포크입니다. 기획 단계만 요구사항·설계·과제 문서를 차례로 쓰고 승인받는 방식(SDD)으로 바꿨습니다. 구현·디버깅·검증 스킬과 세션 시작 훅은 upstream 그대로입니다.
 
-## Table of Contents
+## upstream과 다른 점
 
-- [How it works](#how-it-works)
-- [Commercial Services](#commercial-services)
-- [Getting Started](#installation)
-  - [Claude Code](#claude-code)
-  - [Antigravity](#antigravity)
-  - [Codex App](#codex-app)
-  - [Codex CLI](#codex-cli)
-  - [Cursor](#cursor)
-  - [Devin CLI](#devin-cli)
-  - [Factory Droid](#factory-droid)
-  - [Gemini CLI](#gemini-cli)
-  - [GitHub Copilot CLI](#github-copilot-cli)
-  - [Grok Build CLI](#grok-build-cli)
-  - [Kimi Code](#kimi-code)
-  - [OpenCode](#opencode)
-  - [Pi](#pi)
-  - [Qwen Code](#qwen-code)
-  - [Hermes Agent](#hermes-agent)
-  - [Muse](#muse)
-- [The Basic Workflow](#the-basic-workflow)
-- [When Something Goes Wrong](#when-something-goes-wrong)
-- [Community](#community)
-- [What's Inside](#whats-inside)
-- [Philosophy](#philosophy)
-- [Contributing](#contributing)
-- [Updating](#updating)
-- [License](#license)
-- [Visual companion telemetry](#visual-companion-telemetry)
+| 파일 | 바뀐 내용 |
+|---|---|
+| `skills/brainstorming/SKILL.md` | 대화 절차와 단일 설계 문서를 없앴습니다. 일의 크기를 정한 다음 큰 기능이면 `requirements.md`와 `design.md`를 따로 써서 각각 승인받게 합니다. |
+| `skills/writing-plans/SKILL.md` | 세 군데를 바꿨습니다. 계획 저장 위치를 `docs/specs/<feature-name>/tasks.md`로 바꿨습니다. 계획 첫 줄에서 실행 스킬 지정을 뺐습니다. 실행 방식을 고르게 하던 질문은 "승인 뒤 `/clear`, 구현 수단은 과제를 보고 판단"으로 바꿨습니다. |
+| `.claude-plugin/marketplace.json` | 마켓플레이스 이름과 설치 이름을 `jelly-harness`로 바꿨습니다. |
+| `.github/workflows/upstream-release-check.yml`, `.github/scripts/upstream-release-check.sh` | upstream에 새 릴리스가 나오면 이 레포에 이슈를 여는 점검을 추가했습니다. |
+| `README.md`, `CLAUDE.md` | 이 포크에 맞게 새로 썼습니다. |
 
-## How it works
+그 밖의 스킬, 훅, 문서(`RELEASE-NOTES.md`, `AGENTS.md`, `docs/` 등)는 upstream 것입니다.
 
-It starts from the moment you fire up your coding agent. As soon as it sees that you're building something, it *doesn't* just jump into trying to write code. Instead, it steps back and asks you what you're really trying to do. 
+플러그인 내부 이름은 `superpowers` 그대로입니다. 그래서 스킬은 `superpowers:brainstorming`처럼 upstream과 같은 접두어로 부릅니다.
 
-Once it's teased a spec out of the conversation, it shows it to you in chunks short enough to actually read and digest. 
+## 설치
 
-After you've signed off on the design, your agent puts together an implementation plan that's clear enough for an enthusiastic junior engineer with poor taste, no judgement, no project context, and an aversion to testing to follow. It emphasizes true red/green TDD, YAGNI (You Aren't Gonna Need It), and DRY. 
+레포를 클론한 뒤 그 폴더를 로컬 마켓플레이스로 추가합니다.
 
-Next up, once you say "go", it launches a *subagent-driven-development* process, having agents work through each engineering task, inspecting and reviewing their work, and continuing forward. It's not uncommon for your agent to work autonomously for a couple hours at a time without deviating from the plan you put together.
-
-There's a bunch more to it, but that's the core of the system. And because the skills trigger automatically, you don't need to do anything special. Your coding agent just has Superpowers.
-
-## Commercial Services
-
-If you're using Superpowers in enterprise and could benefit from commercial support, additional tooling, or managed spending, please don't hesitate to drop us a line at sales@primeradiant.com.
-
-## Installation
-
-Installation differs by harness. If you use more than one, install Superpowers separately for each one.
-
-### Claude Code
-
-Superpowers is available via the [official Claude plugin marketplace](https://claude.com/plugins/superpowers)
-
-#### Official Marketplace
-
-- Install the plugin from Anthropic's official marketplace:
-
-  ```bash
-  /plugin install superpowers@claude-plugins-official
-  ```
-
-#### Superpowers Marketplace
-
-The Superpowers marketplace provides Superpowers and some other related plugins for Claude Code.
-
-- Register the marketplace:
-
-  ```bash
-  /plugin marketplace add obra/superpowers-marketplace
-  ```
-
-- Install the plugin from this marketplace:
-
-  ```bash
-  /plugin install superpowers@superpowers-marketplace
-  ```
-
-### Antigravity
-
-Install Superpowers as a plugin from this repository:
-
-```bash
-agy plugin install https://github.com/obra/superpowers
+```
+git clone https://github.com/jelitz/jelly-harness.git
 ```
 
-Antigravity lists each installed skill's description, and the description of
-the `using-superpowers` skill prompts the model to load that skill at the start
-of a conversation. Reinstall with the same command to update.
-
-### Codex App
-
-Superpowers is available via the [official Codex plugin marketplace](https://github.com/openai/plugins).
-
-- In the Codex app, click on Plugins in the sidebar.
-- You should see `Superpowers` in the Coding section.
-- Click the `+` next to Superpowers and follow the prompts.
-
-### Codex CLI
-
-Superpowers is available via the [official Codex plugin marketplace](https://github.com/openai/plugins).
-
-- Open the plugin search interface:
-
-  ```bash
-  /plugins
-  ```
-
-- Search for Superpowers:
-
-  ```bash
-  superpowers
-  ```
-
-- Select `Install Plugin`.
-
-### Cursor
-
-- In Cursor Agent chat, install from marketplace:
-
-  ```text
-  /add-plugin superpowers
-  ```
-
-- Or search for "superpowers" in the plugin marketplace.
-
-### Devin CLI
-
-- Install the plugin from this repository:
-
-  ```bash
-  devin plugins install obra/superpowers
-  ```
-
-- Update to the latest version with:
-
-  ```bash
-  devin plugins update superpowers
-  ```
-
-### Factory Droid
-
-- Register the marketplace:
-
-  ```bash
-  droid plugin marketplace add https://github.com/obra/superpowers
-  ```
-
-- Install the plugin:
-
-  ```bash
-  droid plugin install superpowers@superpowers
-  ```
-
-### Gemini CLI
-
-- Install the extension:
-
-  ```bash
-  gemini extensions install https://github.com/obra/superpowers
-  ```
-
-- Update later:
-
-  ```bash
-  gemini extensions update superpowers
-  ```
-
-### GitHub Copilot CLI
-
-- Register the marketplace:
-
-  ```bash
-  copilot plugin marketplace add obra/superpowers-marketplace
-  ```
-
-- Install the plugin:
-
-  ```bash
-  copilot plugin install superpowers@superpowers-marketplace
-  ```
-
-### Grok Build CLI
-
-Superpowers is available via the [official Grok plugin marketplace](https://github.com/xai-org/plugin-marketplace).
-
-- Install the plugin from xAI's official marketplace:
-
-  ```bash
-  grok plugin install superpowers@xai-official --trust
-  ```
-
-- Or open the marketplace in the TUI, search for Superpowers, and install it:
-
-  ```text
-  /marketplace
-  ```
-
-### Kimi Code
-
-Superpowers is available in Kimi Code's plugin marketplace.
-
-- Open Kimi Code's plugin manager:
-
-  ```text
-  /plugins
-  ```
-
-- Go to `Marketplace` > `Superpowers` and install it.
-
-- Or install directly from this repository:
-
-  ```text
-  /plugins install https://github.com/obra/superpowers
-  ```
-
-- Detailed docs: [docs/README.kimi.md](docs/README.kimi.md)
-
-### OpenCode
-
-OpenCode uses its own plugin install; install Superpowers separately even if you
-already use it in another harness.
-
-- Tell OpenCode:
-
-  ```
-  Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
-  ```
-
-- Detailed docs: [docs/README.opencode.md](docs/README.opencode.md)
-
-### Pi
-
-Install Superpowers as a Pi package from this repository:
-
-```bash
-pi install git:github.com/obra/superpowers
+```
+/plugin marketplace add <클론한 폴더의 절대 경로>
+/plugin install jelly-harness@jelly-harness
 ```
 
-For local development, run Pi with this checkout loaded as a temporary package:
+- GitHub 주소로 바로 설치하지 않습니다. 그렇게 설치하면 매니페스트의 버전(7.0.2)이 바뀔 때까지 처음 받은 복사본을 계속 쓰므로 이 포크에서 스킬을 고쳐도 반영되지 않습니다. 로컬 경로로 추가하면 폴더에서 바로 읽으므로 다음 세션이나 `/reload-plugins`에서 반영됩니다.
+- 다른 superpowers 설치본은 제거합니다. 이름이 같은 플러그인 둘이 켜져 있으면 한쪽의 훅만 등록됩니다.
+- 큰 기능의 문서 구성은 `writing-sdd-blueprints` 스킬이 정합니다. 이 스킬은 이 레포에 없으므로 `~/.claude/skills/`에 따로 둡니다.
 
-```bash
-pi -e /path/to/superpowers
+## 쓰는 흐름
+
+1. `superpowers:brainstorming`이 일의 크기를 정합니다. 한 문장으로 설명되는 변경은 바로 수행합니다. 작은 변경은 채팅에서 계획을 승인받고 수행합니다.
+2. 큰 기능이면 Claude가 `docs/specs/<feature-name>/requirements.md`를 쓰고 사용자가 승인합니다. 이어서 `design.md`도 같은 방식으로 승인받습니다.
+3. `superpowers:writing-plans`가 같은 폴더에 `tasks.md`를 씁니다. 과제 제목은 `### Task N: 이름` 형식입니다.
+4. 사용자가 `tasks.md`를 승인하면 `/clear`로 컨텍스트를 비우고 구현을 시작합니다. 구현 수단은 Claude가 과제 수, 과제 사이의 의존, 파일 겹침을 보고 고릅니다.
+5. 과제를 마치면 제목 끝에 ✅를 붙이고 `implemented.md`를 함께 갱신합니다.
+
+## upstream 릴리스 반영
+
+`Upstream release check` 워크플로가 매일 09:17(한국 시간)에 obra/superpowers의 최신 릴리스를 확인합니다. 아직 병합하지 않은 릴리스가 있으면 "upstream v○○ 릴리스: 병합 필요" 이슈를 열고 레포 소유자에게 배정합니다. 이슈는 릴리스마다 하나만 열립니다. 본문에는 이 포크에서 고친 파일 중 upstream에서도 바뀐 파일이 적힙니다.
+
+병합은 로컬 클론에서 합니다.
+
+```
+git fetch upstream --tags
+git merge v<새 버전>
 ```
 
-The Pi package loads the Superpowers skills and a small extension that injects the `using-superpowers` bootstrap at session startup and again after compaction. Pi has native skills, so no compatibility `Skill` tool is required. Subagent and task-list tools remain optional Pi companion packages.
+병합 충돌은 파일마다 처리 방법이 다릅니다.
 
-### Qwen Code
+| 파일 | 처리 |
+|---|---|
+| `skills/brainstorming/SKILL.md`, `README.md` | 이 포크의 내용을 유지합니다. |
+| `skills/writing-plans/SKILL.md` | upstream 변경을 받습니다. 저장 위치, 계획 첫 줄, 실행 방식 안내 세 군데만 이 포크의 내용으로 둡니다. |
+| `.claude-plugin/marketplace.json` | 이름은 `jelly-harness`로 두고 버전은 upstream 값을 받습니다. |
 
-Qwen Code installs plugins from Claude Code marketplaces directly.
+병합한 뒤 `claude plugin validate .`로 검증하고 `git push origin main`으로 올립니다. 열려 있는 세션은 `/reload-plugins`로 반영합니다.
 
-- Install the plugin from this repository, and pick `superpowers` when prompted:
+`upstream` 원격이 없는 클론에서는 `git remote add upstream https://github.com/obra/superpowers.git`를 먼저 실행합니다.
 
-  ```bash
-  qwen extensions install obra/superpowers
-  ```
+## 주의와 한계
 
-- Update later:
+- superpowers의 실행 스킬은 `### Task N:` 형식의 제목만 과제로 읽습니다. `T1`처럼 다른 표기를 쓴 `tasks.md`는 읽지 못합니다.
+- `superpowers:subagent-driven-development`는 구현 서브에이전트를 한 번에 하나씩만 띄웁니다. upstream의 설계이고 이 포크에서 바꾸지 않았습니다.
+- 2026-11-24 기준으로 설치와 스킬 로드까지만 확인했습니다. 이 구성으로 기능 하나를 끝까지 만든 기록은 아직 없습니다.
 
-  ```bash
-  qwen extensions update superpowers
-  ```
+## 라이선스
 
-### Hermes Agent
-
-Install Superpowers as a Hermes plugin from this repository:
-
-```bash
-hermes plugins install obra/superpowers --enable
-```
-
-Restart any active Hermes sessions after installing. Note: Hermes has no
-post-compaction hook, so a very long session that compacts over its first
-turn loses the bootstrap — start a fresh session if skills stop triggering.
-
-### Muse
-
-Superpowers is available as a native Muse plugin — same repo, same skills, all harnesses. The `using-superpowers` bootstrap is injected via the native `SessionStart` hook alongside Claude Code, Codex, Cursor, Gemini, Pi, and the rest — no per-session opt-in.
-
-- Install from a local checkout:
-
-  ```bash
-  muse plugins install ./
-  muse plugins approve superpowers
-  ```
-
-  Or clone and install:
-
-  ```bash
-  git clone https://github.com/obra/superpowers.git
-  muse plugins install ./superpowers
-  muse plugins approve superpowers
-  ```
-
-- Update later:
-
-  ```bash
-  muse plugins update superpowers
-  ```
-
-Restart any active Muse sessions after installing so the `SessionStart` hook takes effect — skills are active immediately, hooks require approval on first install. To verify, start a fresh session and send `Let's make a react todo list` — a working install auto-triggers `brainstorming` before any code is written. Version is tracked in `.version-bump.json` so `scripts/bump-version.sh` keeps it in sync.
-
-## The Basic Workflow
-
-1. **brainstorming** - Activates before building anything. Draws out what you actually want, and why, through questions that get you describing it, then plays its understanding back for correction. Small changes get agreed in chat; projects get a written design document a builder could plan from.
-
-2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
-
-3. **writing-plans** - Activates with approved design. Breaks work into bite-sized tasks (2-5 minutes each). Every task has exact file paths, complete code, verification steps.
-
-4. **subagent-driven-development** or **executing-plans** - Activates with plan. Either dispatches a fresh subagent per task with a review after each (most thorough), or implements every task inline in the current session with one fresh review of the whole branch at the end (cheapest).
-
-5. **test-driven-development** - Activates during implementation. Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit. Deletes code written before tests.
-
-6. **requesting-code-review** - Activates between tasks. Reviews against plan, reports issues by severity. Critical issues block progress.
-
-7. **finishing-a-development-branch** - Activates when tasks complete. Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
-
-**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
-
-## When Something Goes Wrong
-
-Sometimes a session misbehaves: a skill fires when it shouldn't, stays silent when it should, or the agent ignores its plan, repeats work, or burns more tokens than you'd expect. Ask your coding agent to "figure out what went wrong with superpowers in this session" and it will invoke the **diagnosing-superpowers** skill. To examine an earlier session, name it: "figure out what went wrong with superpowers in session `<id>`".
-
-The skill reads the session transcript, reports what happened with line-level evidence, and, if you want, packages a scrubbed bundle for a bug report.
-
-## Community
-
-Superpowers is built by [Jesse Vincent](https://blog.fsck.com) and the rest of the folks at [Prime Radiant](https://primeradiant.com).
-
-- **Discord**: [Join us](https://discord.gg/35wsABTejz) for community support, questions, and sharing what you're building with Superpowers
-- **Issues**: https://github.com/obra/superpowers/issues
-- **Release announcements**: [Sign up](https://primeradiant.com/superpowers/) to get notified about new versions
-
-## What's Inside
-
-### Skills Library
-
-**Testing**
-- **test-driven-development** - RED-GREEN-REFACTOR cycle (includes testing anti-patterns reference)
-
-**Debugging**
-- **systematic-debugging** - 4-phase root cause process (includes root-cause-tracing, defense-in-depth, condition-based-waiting techniques)
-- **verification-before-completion** - Ensure it's actually fixed
-- **diagnosing-superpowers** - Work out what went wrong in a session, with evidence; export a scrubbed bundle or file an issue
-
-**Collaboration** 
-- **brainstorming** - Drawing out intent before building
-- **writing-plans** - Detailed implementation plans
-- **executing-plans** - Inline plan execution: one context, one final review
-- **dispatching-parallel-agents** - Concurrent subagent workflows
-- **requesting-code-review** - Pre-review checklist
-- **receiving-code-review** - Responding to feedback
-- **using-git-worktrees** - Parallel development branches
-- **finishing-a-development-branch** - Merge/PR decision workflow
-- **subagent-driven-development** - Fast iteration with two-stage review (spec compliance, then code quality)
-
-**Meta**
-- **writing-skills** - Create new skills following best practices (includes testing methodology)
-- **using-superpowers** - Introduction to the skills system
-
-## Philosophy
-
-- **Test-Driven Development** - Write tests first, always
-- **Systematic over ad-hoc** - Process over guessing
-- **Complexity reduction** - Simplicity as primary goal
-- **Evidence over claims** - Verify before declaring success
-
-Read [the original release announcement](https://blog.fsck.com/2025/10/09/superpowers/).
-
-## Contributing
-
-The general contribution process for Superpowers is below. Keep in mind that we don't generally accept contributions of new skills and that any updates to skills must work across all of the coding agents we support. We also don't accept agent-written PRs that fix issues filed by someone else unless a maintainer asked for one, even when you hit the same problem; add your report to the existing issue instead.
-
-1. Fork the repository
-2. Switch to the 'dev' branch
-3. Create a branch for your work
-4. Follow the `writing-skills` skill for creating and testing new and modified skills
-5. Submit a PR, filling in every section of the pull request template, including the summary a human writes in their own words.
-
-Skill-behavior tests use the drill eval harness from [superpowers-evals](https://github.com/prime-radiant-inc/superpowers-evals/), cloned into `evals/` — see `evals/README.md` for setup. Plugin-infrastructure tests live at `tests/` and run via the relevant `run-*.sh` or `npm test`.
-
-See `skills/writing-skills/SKILL.md` for the complete guide.
-
-## Updating
-
-Superpowers updates are somewhat coding-agent dependent, but are often automatic.
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Visual companion telemetry
-
-Because skills and plugins don't provide any feedback to creators, we have no idea how many of you are using Superpowers. By default, the Prime Radiant logo on brainstorming's optional visual companion feature is loaded from our website. It includes the version of Superpowers in use. It does not include any details about your project, prompt, or coding agent. We don't see your clicks or anything about what you're building. This helps us have a rough idea of how many folks are using Superpowers and which version of Superpowers they're using. It's 100% optional. To disable this, set the environment variable `SUPERPOWERS_DISABLE_TELEMETRY` to any true value. Superpowers also honors Claude Code's `DISABLE_TELEMETRY` and `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` opt-outs.
+MIT. 원저작자는 [obra/superpowers](https://github.com/obra/superpowers)의 Jesse Vincent입니다. [LICENSE](LICENSE)는 upstream 그대로입니다.
