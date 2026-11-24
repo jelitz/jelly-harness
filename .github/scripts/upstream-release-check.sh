@@ -68,7 +68,7 @@ body=$(mktemp)
   echo "## 이 포크에서 고친 파일과 겹치는 변경"
   echo
   if [ -n "$overlap" ]; then
-    echo "아래 파일은 이 포크에서도 고쳤고 upstream에서도 바뀌었습니다. 병합할 때 충돌이 납니다."
+    echo "아래 파일은 이 포크에서도 고쳤고 upstream에서도 바뀌었습니다. 병합할 때 충돌할 수 있으니 확인이 필요합니다."
     echo
     printf '%s\n' "$overlap" | while IFS= read -r f; do
       stat=$(git diff --numstat "$base" "$latest" -- "$f" | awk '{print "+" $1 " -" $2}')
