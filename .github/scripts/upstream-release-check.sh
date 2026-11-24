@@ -32,10 +32,13 @@ else
   title="[시험] upstream 릴리스 알림 ($latest 는 이미 병합됨)"
 fi
 
-# One issue per release: skip when an issue with this title exists, open or closed.
-if [ "$pending" = 1 ] && [ -z "${DRY_RUN:-}" ]; then
-  if gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 200 \
-       --json title --jq '.[].title' | grep -Fxq "$title"; then
+# One issue per release: skip when an issue with this title exists, open or
+# closed. The titles are read into a variable first, so a failed listing
+# stops the script here instead of falling through to a duplicate issue.
+if [ "$pending" = 1 ]; then
+  titles=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 500 \
+    --json title --jq '.[].title')
+  if grep -Fxq -- "$title" <<<"$titles"; then
     echo "already reported: $title"
     exit 0
   fi
