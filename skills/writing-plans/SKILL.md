@@ -13,8 +13,9 @@ Write implementation plans for an engineer who has not seen this codebase or thi
 
 **Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
-- (User preferences for plan location override this default)
+**Save plans to:** `docs/specs/<feature-name>/tasks.md`, in the same folder as the `requirements.md` and `design.md` it implements (the `writing-sdd-blueprints` skill defines that layout)
+- (A project `CLAUDE.md` that sets its own spec location overrides this default)
+- The plan's **Spec:** line names both `requirements.md` and `design.md`
 
 ## Scope Check
 
@@ -56,7 +57,7 @@ independently testable deliverable.
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **구현 안내:** 단계는 체크박스(`- [ ]`)로 추적한다. 이 계획은 구현 수단을 정하지 않는다. 과제의 의존 관계와 파일 겹침을 보고 고른다. 과제를 마치면 `### Task N:` 제목 끝에 ✅를 붙이고 같은 변경에서 `implemented.md`를 갱신한다.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -179,26 +180,20 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 ## Execution Handoff
 
 After saving and self-reviewing the plan, link it for your human partner
-to read. If they have already explicitly supplied an execution method, ask
-them to review the plan and confirm it captures what they want; wait for that
-review before implementation, then use the preserved method. Otherwise, ask
-them to review the plan and choose an execution method before implementation.
+to read and ask whether it captures what they want. Wait for their
+approval before any implementation.
 
-**When no execution method has already been supplied:**
+**"Plan complete and saved to `docs/specs/<feature-name>/tasks.md`. Please review it. Does it capture what you want?"**
 
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Please review the plan. Which execution approach would you prefer?**
+Once they approve, do not start implementing in this session. Suggest
+`/clear` and resuming from the spec folder path, so implementation starts
+in a context free of interview and exploration residue.
 
-- **Subagent-driven** - A fresh subagent implements each task and a fresh reviewer checks it before the next one starts, then a whole-branch review at the end. Most thorough; costs a fresh context per task and per review.
-- **Native** - I implement every task myself in this session, the way this harness runs work, then one fresh reviewer on the most capable model checks the whole branch. Cheapest and fastest; no independent review until the end. Runs well with a mid-tier session model, since the plan carries the design.
-
-**For this plan I recommend <one of the two>, because <one sentence from the plan: how much the tasks depend on each other's interfaces, how many there are, what a shipped mistake would cost>. Does the plan capture what you want, and which approach should we use?"**
-
-**When an execution method has already been supplied:**
-
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Please review the plan. Does it capture what you want?"**
-
-**If Subagent-driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-
-**If Native chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
+The plan does not fix an execution method. The session that implements it
+chooses from the plan itself: how many tasks there are, how much they
+depend on each other's interfaces, and whether their files overlap.
+Working inline, superpowers:executing-plans,
+superpowers:subagent-driven-development, parallel subagents in separate
+worktrees, a team, and a Workflow script are all candidates. Your human
+partner's instructions decide where they speak to this, and a method they
+have already named is the one to use.
